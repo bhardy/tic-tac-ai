@@ -5,10 +5,7 @@ import styles from "./Game.module.css";
 
 type CellState = "X" | "O" | undefined;
 
-const returnGameWinner = (gameState: CellState[]) => {
-  // @note: not going to lie, I looked up how to check who would win and was
-  // embarrassed to realize it was this easy
-
+const getFinalGameStatus = (gameState: CellState[]) => {
   const combinations = [
     // horizontal
     [0, 1, 2],
@@ -23,30 +20,34 @@ const returnGameWinner = (gameState: CellState[]) => {
     [2, 4, 6],
   ];
 
-  let winner = null;
+  let finalGameStatus = null;
   combinations.forEach(([a, b, c]) => {
     if (
       gameState[a] &&
       gameState[a] === gameState[b] &&
       gameState[a] === gameState[c]
     ) {
-      winner = gameState[a];
+      finalGameStatus = `${gameState[a]} wins!`;
     }
   });
-  return winner;
+  if (gameState.every((cell) => cell !== undefined)) {
+    finalGameStatus = "It's a draw!";
+  }
+  return finalGameStatus;
 };
 
 export const Game = () => {
   const initialState: CellState[] = Array(9).fill(undefined);
   const [gameState, setGameState] = useState<CellState[]>(initialState);
   const [turn, setTurn] = useState<number>(0);
-  const [winner, setWinner] = useState<CellState | null>(null);
+  // const [winner, setWinner] = useState<CellState | null>(null);
+  const [finalGameStatus, setFinalGameStatus] = useState<string | null>(null);
 
   const isUsersTurn = turn % 2 === 0;
 
   const handleUserClick = (index: number) => {
     // check if the game is over
-    if (winner) {
+    if (finalGameStatus) {
       return;
     }
     // check if the cell is already taken
@@ -88,16 +89,16 @@ export const Game = () => {
   // @note: this effect triggers the computer's action
   useEffect(() => {
     // @todo: improve this logic to check if the game is over
-    if (!isUsersTurn && !winner) {
+    if (!isUsersTurn && !finalGameStatus) {
       handleComputerChoice();
     }
-  }, [isUsersTurn, gameState, winner, handleComputerChoice]);
+  }, [isUsersTurn, gameState, finalGameStatus, handleComputerChoice]);
 
   // @note: this effect checks if there is a winner after each turn
   useEffect(() => {
-    const winner = returnGameWinner(gameState);
+    const winner = getFinalGameStatus(gameState);
     if (winner) {
-      setWinner(winner);
+      setFinalGameStatus(winner);
     }
   }, [gameState]);
 
@@ -106,7 +107,7 @@ export const Game = () => {
       <div className={styles.game}>
         <Board gameState={gameState} onCellClick={handleUserClick} />
       </div>
-      {winner && <h2 className={styles.winner}>{winner} wins!</h2>}
+      {finalGameStatus && <h2 className={styles.winner}>{finalGameStatus}</h2>}
     </>
   );
 };
