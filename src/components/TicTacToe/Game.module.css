@@ -1,0 +1,41 @@
+.game {
+  width: 100%;
+  max-width: 600px;
+  padding: 16px;
+}
+
+.board {
+  container-type: inline-size;
+  container-name: board;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: var(--background);
+  gap: 2%;
+}
+
+.cell {
+  color: var(--background);
+  font-weight: bold;
+  font-size: 2.5em;
+}
+
+@container board (min-width: 300px) {
+  .cell {
+    font-size: 4em;
+  }
+}
+
+@container board (min-width: 400px) {
+  .cell {
+    font-size: 5em;
+  }
+}
+
+@container board (min-width: 500px) {
+  .cell {
+    font-size: 6em;
+  }
+}
