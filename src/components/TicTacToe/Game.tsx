@@ -38,7 +38,7 @@ const AI_PROMPT_TEMPLATE = (gameState: CellState[], availableCells: number[]) =>
     )}. Any turn that you can win you should try to win. If you don't have a winning move, you should try to block X from an immediate win on their next turn. If X has no winning opportunity on its next move, you can try to strategize for your next turn. Ensure the last character of your response is ONLY a single number (0-8) representing the index of your chosen move.`;
 
 const getFinalGameStatus = (gameState: CellState[]) => {
-  winningCombinations.forEach(([a, b, c]) => {
+  for (const [a, b, c] of winningCombinations) {
     if (
       gameState[a] &&
       gameState[a] === gameState[b] &&
@@ -46,7 +46,7 @@ const getFinalGameStatus = (gameState: CellState[]) => {
     ) {
       return `${gameState[a]} wins!`;
     }
-  });
+  }
   if (gameState.every((cell) => cell !== undefined)) {
     return "It's a draw!";
   }
@@ -108,7 +108,6 @@ export const Game = () => {
       }
       return value;
     });
-
     setGameState(newGameState);
     setIsComputerThinking(false);
     setTurn(turn + 1);
